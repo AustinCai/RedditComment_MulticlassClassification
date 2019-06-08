@@ -1,73 +1,43 @@
-import pickle
-import re
-import os
+# machine learning imports
 from numpy import array
 
+# utility imports
+import pickle
+import re
+
+# helper file imports
+import constants
+import helper
+
+# Naive bayes imports
 import sys
 sys.path.insert(0, '../naive_bayes')
-
-import constants
-import word_embeddings
 import nb_constants
 import nb_helper
 
-# # X is a list (numpy.ndarray) of 150 entries, where each entry is a R^4 feature vector
-# # y is a list (numpy.ndarray) of 150 classification labels, where y[i] is the label for X[i]
-# X, y = load_iris(return_X_y=True)
+# ====================================================================================
 
-# print(X)
-# print(y)
-
-
-with open(constants.FULL_DATASET, 'rb') as f:
-    dataset = pickle.load(f) 
-
+# load dataset, a list of entires where each entry is a list containing author, date, id, comment string, etc.
+dataset = helper.undump(constants.FULL_DATASET)
 print("dataset loaded")
-comments = [entry[constants.COMMENT_INDEX].split() for entry in dataset]
-#---------------------------------------------
 
-# NB features
-wordProbByClass = nb_helper.learnProbsMulti(dataset)
-
-print("wordProbByClass calculated")
-
-# word to vec features
-with open("../../data/embeddings.pkl", 'rb') as f:
-    wordToVec = pickle.load(f) 
-
+# load word embedding dictionaries 
+wordToVec = helper.undump("../../data/embeddings_100k.pkl")
 print("wordToVec loaded")
+
+# learn probabilities to calculate Naive Bayes features
+wordProbByClass = nb_helper.learnProbsMulti(dataset)
+print("wordProbByClass calculated")
 
 X = []
 y = []
-for k in range(len(comments)): # iterates through each comment
-	comment = comments[k]
 
-	commentVecAdditions = 0
-	commentVec = [0.0 for _ in range(constants.WORDVEC_LEN)]
+for k in range(len(dataset)): # iterates through each comment
+	
+	helper.progressUpdate(k, len(dataset), 1000)
 
-	for i in range(len(comment)): # iterates through each word of the comment
-
-		# skip to the first word with an embedding
-		while i < len(comment) and wordToVec[re.sub(r'[^\w\s]','',comment[i].lower())] == 0: 
-			i+=1
-
-		# if the dict doesn't contain any word mappings, don't try to query for one
-		if i == len(comment): continue
-
-		wordVec = wordToVec[re.sub(r'[^\w\s]','',comment[i].lower())]
-		commentVec = [commentVec[i] + wordVec[i] for i in range(constants.WORDVEC_LEN)]
-		commentVecAdditions += 1
-
-	# if mappings exist, average them out
-	if i != len(comment): 
-		commentVec = [commentVec[i]/commentVecAdditions for i in range(len(commentVec))]
-
-	# append 20 features
-	weightByClass = nb_helper.classWeightsFromComment(dataset[k], wordProbByClass)
-
-	# TODO: normalize?
-
-	commentVec += weightByClass
+	# returns a 320 dimension feature vector (300 features form GloVe + 20 features from Naive Bayes)
+	commentVec = helper.getCommentVec(dataset[k], wordToVec, wordProbByClass)
 
 	X.append(commentVec)
 	y.append(dataset[k][-1])
@@ -82,7 +52,7 @@ y = array(y)
 
 print(X)
 
-with open('X_full+20.pkl', 'wb') as f:
-    pickle.dump(X, f)
-with open('y_full+20.pkl', 'wb') as f:
-    pickle.dump(y, f)
+helper.dump('X_full+20.pkl', X)
+helper.dump('y_full+20.pkl', y)
+
+

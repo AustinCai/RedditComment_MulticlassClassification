@@ -5,6 +5,7 @@ for a usage example.
 '''
 import collections
 import pickle
+import helper
 
 
 def getWordEmbeddingDict(vocabSize = 10000):
@@ -13,7 +14,15 @@ def getWordEmbeddingDict(vocabSize = 10000):
 
 	with open("../../data/glove.42B.300d/glove.42B.300d.txt", 'r') as file:
 
+		progress = 0
 		for lineNum in range(vocabSize):
+
+			# prints progress updates
+			progress += 1
+			if progress >= vocabSize/10:
+				print("10% complete")
+				progress = 0
+
 			line = file.readline()
 			lineList = [i for i in line.split()]
 
@@ -23,8 +32,7 @@ def getWordEmbeddingDict(vocabSize = 10000):
 
 	return word_vec_dict 
 
+# -------------------------------------------------------
 
 word_vec_dict = getWordEmbeddingDict(100000)
-
-with open("embeddings.pkl", 'wb') as f:
-    pickle.dump(word_vec_dict, f)
+helper.dump("embeddings_100k.pkl", word_vec_dict)
