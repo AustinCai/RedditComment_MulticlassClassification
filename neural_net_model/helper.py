@@ -16,7 +16,7 @@ import constants
 
 # Naive bayes imports
 import sys
-sys.path.insert(0, '../naive_bayes')
+sys.path.insert(0, '../naive_bayes_baseline')
 import nb_constants
 import nb_helper
 
