@@ -1,37 +1,21 @@
-Hi Jennie,
+# Who Said It On Reddit: Multiclass Classification of Reddit Comments using Neural Networks
 
-Here is a quick tour of our repository. 
+Austin Cai, Cynthia Liang, Erick Fidel Siavichay-Velasco
 
-"neural_net_model" contains code for our final classification model. The "logistic_regression_model"
-contains code for an intermediate model we implemented while experimenting, and "naive_bayes_baseline"
-contains our baseline model. 
+Reddit is a web content aggregation site where users can post and comment on specific community groups called "subreddits" [1]. Understanding the nature of discussions that occur on Reddit can provide us with a better general understanding of the intricacies of social interaction, especially anonymized online social interaction. 
 
-Here are the important files in each directory. 
+Multiclass classification has been implemented in a variety of fields to assign datapoints to classification buckets. Cascaded classification models (CCMs), or "repeated instantiations of... classifiers...coupled by their input/output variables", have been shown to be effective in improving performance on certain tasks [2]; though there has not been as much success in NLP applications of CCMs [3].
 
-=== neural_net_model ===
-constants.py -- a helper file
-helper.py -- a helper file 
-nn_multiclass.py -- our original neural net implementation, without tuned hyperparameters
-nn_multiclass_ipython.ipynb -- our final neural net implementation
-word_embeddings.py -- helper function to return a dictionary of word embeddings sourced from GloVe
-Xy_dump -- creates feature and label vectors out of our input dataset 
+In this project, we propose a classification system for Reddit comments with a neural network model with cascaded input vectors in which several sub-problems are considered simultaneously, similar to that of a CCM. We used this system on a Kaggle dataset, which we filtered down to 50k comments from each of the top 20 commented-on subreddits for May 2015 [4].
 
-=== naive_bayes_baseline ===
-nb.py -- contains the naive bayes implementation
-nb_helper.py -- a helper file, contains the bulk of the actual calculations
-nb_constants -- a helper file
+We built a neural network classification model using a feature vector with features based on both word embeddings and Naive Bayes probabilities and achieved 41.7% accuracy in classifying comments on the test set, compared to 31.6% accuracy from our baseline model and 60% from our human oracle model.
 
-=== linear_regression_model ===
-line_reg.py -- contains the implementation
+Possible uses for this work include targeting advertisement posts or comments to subreddits where they may be highly discussed or identifying high-risk subreddits associated with certain types of malicious content, as well as new approaches for future models in Natural Language Processing.
 
-Our code implementation relies on a lot of pkl dumps to store intermediate calculations. However, these
-data files are too large to be uploaded to github and were stored in directories outside of our repo. Thus
-many of our files will not run unless you replicate our directory structure and run our files in the right
-sequence. If you are interested in doing so, please let us know and we can help you get the environment
-set up. 
+[1] _Reddit_, www.reddit.com/.
 
-Best,
-Austin, Cynthia, and Erick
+[2] Heitz, Geremy, et al. “Cascaded Classification Models: Combining Models for Holistic Scene Understanding.” _Adv. in Neural Inform. Proc. Systems (NIPS)_, 2008, pp. 641–648.
 
+[3] Sutton, Charles, et al. “Joint parsing and semantic role labeling.” _Proceedings of the Ninth Conference on Computational Natural Language Learning_, June 29-30, 2005, Ann Arbor, Michigan.
 
-
+[4] Reddit. “May 2015 Reddit Comments.” _Kaggle_, 4 June 2019, www.kaggle.com/reddit/reddit-comments-may-2015.
